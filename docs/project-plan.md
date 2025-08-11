@@ -21,9 +21,9 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 
 **Integrated Development Approach**: 
 - Write tests alongside every implementation from Phase 1
-- Validation logic integrated into all phases, not separate
+- Production validation logic built into game business logic
 - Clear separation: MCP Tools (external) vs Internal Functions (server logic)
-- Production monitoring built on same validation foundation
+- Operational monitoring separate from test validation
 
 ### Phase 1: MCP Server Foundation with Sampling
 **Goal**: Establish basic MCP server with sampling capabilities
@@ -40,22 +40,21 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
    - **Role-based sampling contexts**: Essential infrastructure for spymaster vs team information isolation
    - **Dynamic prompt generation**: Game state-aware prompts for effective LLM sampling
 
-### Phase 2: Game State & Internal Logic (with Integrated Validation)
-**Goal**: Implement core game mechanics with validation built-in
+### Phase 2: Game State & Internal Logic (with Input/Output Validation)
+**Goal**: Implement core game mechanics with validation at system boundaries
 
-3. **Core game state management (with validation)**
+3. **Core game state management (with basic validation)**
    - Game board generation (25 words, team assignments)
-   - Turn tracking and validation (internal role switching)
-   - Win/lose condition checking with validation
+   - Turn tracking (internal role switching)
+   - Win/lose condition checking
    - State persistence and serialization
-   - **Integrated validation**: All state changes validated in real-time
+   - **Input/Output validation**: Validate external inputs and dynamic outputs only
 
 4. **Internal game functions (not MCP tools)**
-   - `_switch_role_internal(role)` - Internal role management for game flow
-   - `_validate_hint_format(word, number)` - Microsoft-pattern validation
-   - `_validate_move_legality(card_index, role)` - Move validation
-   - `_check_win_conditions()` - Game end detection
-   - `_update_game_state(action, validation_result)` - State management
+   - State management: `_switch_role_internal()`, `_update_game_state()`, `_check_game_exists()`
+   - Board operations: `_create_board_from_words()`, `_reveal_card()`, `_get_card_team()`
+   
+   **Note**: See Appendix A.2 for complete function specifications.
 
 5. **MCP Resources for game context**
    - `game://rules/codenames` - Complete game rules and mechanics
@@ -67,57 +66,47 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 **Goal**: Provide minimal external interface - only out-of-turn actions
 
 6. **Essential MCP Tools (only out-of-turn actions)**
-   - `create_new_game(red_spymaster="user"|"llm", red_team="user"|"llm", blue_spymaster="user"|"llm", blue_team="user"|"llm")` - User initiates a new game with player type configuration (returns initial game status)
+   - `create_new_game(red_spymaster, red_team, blue_spymaster, blue_team)` - User initiates new game with player type configuration
    - `end_game()` - User terminates current game
 
-**Note**: All turn-based actions (hints, guesses, role switching) are handled internally by the MCP server through automatic elicitation and sampling sequences. Game status is provided automatically at each step, eliminating the need for separate status queries. Status information is filtered based on player types to maintain information security.
+**Note**: All turn-based actions are handled internally by the server. See Appendix A.1 for detailed tool specifications.
 
 ### Phase 4: Internal Game Flow Management (MCP-Initiated Sequences)
 **Goal**: Server manages all turn-based interactions internally
 
 7. **Internal turn management**
    - Server automatically manages spymaster → team → spymaster sequences
-   - No external validation needed - server controls all legal actions
+   - No validation needed - server controls all legal actions
    - Turn-based elicitation and sampling initiated by server, not external tools
 
 8. **Internal elicitation and sampling (MCP-initiated)**
-   - `_elicit_board_preference()` - Server asks user for word source during game creation
-   - `_sample_word_list()` - Server requests word generation from LLM during setup
-   - `_elicit_spymaster_hint()` - Server prompts for hint during spymaster turn (USER spymasters only)
-   - `_sample_spymaster_hint()` - Server requests hint from LLM during spymaster turn (LLM spymasters only)
-   - `_elicit_team_guess()` - Server prompts for guess during team turn (USER teams only)
-   - `_sample_team_guess()` - Server requests guess from LLM during team turn (LLM teams only)
-   - `_elicit_continue_guessing()` - Server asks if team wants to continue guessing (USER teams only)
-   - `_sample_continue_guessing()` - Server requests continuation decision from LLM (LLM teams only)
+   - Board setup: `_elicit_board_preference()`, `_sample_word_list()`
+   - Player interactions: `_elicit_spymaster_hint()`, `_sample_spymaster_hint()`, `_elicit_team_guess()`, `_sample_team_guess()`
+   - Turn continuation: `_elicit_continue_guessing()`, `_sample_continue_guessing()`
 
 9. **Role-based sampling contexts and dynamic prompts (MVP CRITICAL)**
-   - `_generate_spymaster_context()` - Create role-specific context with full board knowledge for LLM spymasters
-   - `_generate_team_context()` - Create role-specific context with limited board info for LLM teams
-   - `_build_dynamic_prompts()` - Generate game state-aware prompts for sampling requests
-   - `_filter_context_by_role()` - Ensure appropriate information isolation in sampling contexts
+   - Context generation: `_generate_spymaster_context()`, `_generate_team_context()`
+   - Prompt management: `_build_dynamic_prompts()`, `_filter_context_by_role()`
 
 10. **Internal game flow functions**
-   - `_run_spymaster_turn()` - Complete spymaster turn sequence with validation
-   - `_run_team_turn()` - Complete team turn sequence with choice management
-   - `_advance_turn()` - Move to next role/team automatically
-   - `_handle_game_end()` - Process win/lose conditions
-   - `_calculate_available_guesses(hint_number)` - Determine max guesses (hint_number + 1)
-   - `_offer_continue_choice(remaining_guesses)` - Present strategic choice to team
-   - `_determine_player_types()` - Track which roles are USER vs LLM for each team
-   - `_filter_status_by_player_type()` - Show spymaster view only when USER spymasters present
+   - Turn management: `_run_spymaster_turn()`, `_run_team_turn()`, `_advance_turn()`
+   - Game state: `_handle_game_end()`, `_determine_player_types()`, `_filter_status_by_player_type()`
+   - Choice management: `_calculate_available_guesses()`, `_offer_continue_choice()`
 
-**Note**: All sampling tools trigger internal validation before applying changes to game state.
+**Note**: See Appendix A.2 for complete function specifications.
+
+**Note**: All external inputs (through tool calls, sampling and elicitation) undergo context-specific validation within the functions that handle them, before applying changes to game state.
 
 ---
 
 ## Architecture: MCP Tools vs Internal Flow Management
 
 ### MCP Tools (Minimal External Interface)
-**Only out-of-turn actions that don't require game state validation:**
-- `create_new_game(red_spymaster, red_team, blue_spymaster, blue_team)` - User starts a new game with player type configuration (returns initial status and triggers internal setup sequence)
-- `end_game()` - User terminates game (safe anytime)
+**Only out-of-turn actions:**
+- `create_new_game()` - User starts new game with player type configuration 
+- `end_game()` - User terminates game
 
-**Player Types**: Each role can be either "user" (human interaction via elicitation) or "llm" (AI interaction via sampling)
+**Player Types**: "user" (human via elicitation) or "llm" (AI via sampling). See Appendix A.1 for details.
 
 ### Internal Flow Management (MCP-Initiated)
 **All turn-based interactions managed by server with automatic status updates:**
@@ -129,106 +118,89 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 
 ### Key Benefits of This Architecture
 1. **No illegal tool calls**: User can't make moves out of turn
-2. **Simplified validation**: Server controls all legal actions internally
+2. **Architecture prevents errors**: Server controls all legal actions through design
 3. **Cleaner interface**: Only 2 external tools needed
 4. **Robust game flow**: Server manages complex turn sequences automatically
 5. **Automatic status updates**: Game status provided at each step, no separate queries needed
 6. **Better UX**: User just creates game and receives continuous updates as it progresses
 7. **Information security**: Spymaster view only shown when USER spymasters are present
 
-### Validation Integration
-**Validation is integrated throughout all phases:**
-- Phase 2: Internal validation functions built into game logic
-- Phase 3: MCP tools trigger internal validation before state changes
-- Phase 4: Sampling results validated before applying to game state
-- All phases: Same validation logic used for testing and production monitoring
+### Architecture Benefits
+**Architecture and validation work together:**
+- Phase 2: Context-specific validation within game logic functions, internal logic controlled by architecture
+- Phase 3: MCP tools validate inputs within their specific contexts before state changes
+- Phase 4: Sampling and elicitation functions validate inputs based on expected game state
+- All phases: Architecture prevents illegal actions, validation protects against bad data within specific contexts
 
 ---
 
-## Microsoft-Inspired Validation Best Practices
+## MCP Input/Output Validation Patterns
 
-### Design Principles (from Semantic Kernel guidance)
-- **Descriptive naming**: Functions clearly convey their validation purpose
-- **Minimal parameters**: Use primitive types for validation inputs
-- **Clear return schemas**: Structured validation results with detailed error information
-- **Local state management**: Keep sensitive validation logic server-side
-- **Token optimization**: Minimize validation overhead in LLM interactions
+### Schema-Based Validation (from MCP SDK patterns)
+- **JSON Schema**: Use inputSchema for tool parameters and output validation
+- **Type Safety**: Leverage Python type hints for automatic schema generation
+- **Structured Responses**: Return structured data with proper error handling
 
-### Validation Function Patterns
+### Input Validation Functions
 ```python
-# Following Microsoft's plugin patterns
-@validation_function(description="Validates hint format according to Codenames rules")
-def validate_hint_format(hint_word: str, hint_number: int) -> ValidationResult:
-    """Returns structured validation result with success/failure and detailed context"""
+# MCP SDK pattern for input validation
+@server.call_tool()
+async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    if name == "create_new_game":
+        # Validate player types
+        for role, player_type in arguments.items():
+            if player_type not in ["user", "llm"]:
+                raise ValueError(f"Invalid player type '{player_type}' for {role}")
+        
+        # Continue with validated inputs
+        return await process_game_creation(arguments)
     
-@validation_function(description="Checks move legality for current game state")  
-def validate_move_legality(card_index: int, current_role: str) -> ValidationResult:
-    """Validates if the move is allowed given current game state and role"""
+    raise ValueError(f"Unknown tool: {name}")
 ```
 
+### Error Handling Best Practices
+- **Specific Exceptions**: Raise ValueError for invalid inputs, not generic Exception
+- **Structured Error Responses**: Provide clear error messages for debugging
+- **Input Sanitization**: Clean and validate external data at system boundaries
+
 ### Integration with Testing & Production
-- **Test-driven validation**: Each validation rule generates test scenarios
-- **Production monitoring**: Same validation logic used for real-time rule enforcement
-- **Structured error reporting**: Consistent error format for both dev and prod
-- **Performance tracking**: Validation metrics collection for optimization
+- **Requirements-based test design**: Game rules drive systematic test case creation
+- **Separate validation concerns**: Production validation built into business logic, test validation in test suites
+- **Independent verification**: Tests verify production code behavior without shared validation dependencies
+- **Monitoring production code**: Operational metrics track production validation performance
 
 ---
 
 ## Integrated Testing & Production Strategy
 
 ### Development Testing (Integrated Throughout Phases 1-4)
-**Approach**: Write tests alongside implementation using validation logic
+**Approach**: Requirements-based testing with test cases derived from game rules
 
-- **Unit Tests**: Test individual functions and validation rules
-- **Integration Tests**: Test MCP tool workflows and sampling integration
-- **Game Logic Tests**: Test complete game scenarios using validation framework
-- **Rule Compliance Tests**: Comprehensive rule enforcement scenarios
-- **Performance Tests**: Ensure validation doesn't impact game responsiveness
+- **Unit Testing**: Test individual functions against specific rule requirements
+- **Integration Testing**: Test MCP tool workflows and sampling integration
+- **Functional Testing**: Test complete game scenarios against rule compliance
+- **System Testing**: Comprehensive rule enforcement and game flow validation
+- **Performance Testing**: Ensure rule validation doesn't impact game responsiveness
 
-### Production Monitoring & Validation
-**Approach**: Extend validation framework for live monitoring
+### Production Monitoring & Operations
+**Approach**: Context-specific validation within game logic to protect system integrity
 
-- **Real-time Rule Enforcement**: Same validation logic used in development
-- **Audit Trails**: Log all game actions and validation results
-- **Anomaly Detection**: Identify unusual patterns or potential issues
-- **Performance Monitoring**: Track validation overhead and game performance
-- **Error Reporting**: Detailed logging for debugging production issues
+- **Player Type Validation**: Validate player types during game creation (`create_new_game()`)
+- **Board Preference Validation**: Validate user preferences within `_elicit_board_preference()`
+- **Word List Validation**: Validate LLM-generated words within `_sample_word_list()`
+- **Hint Validation**: Validate hint format within `_elicit_spymaster_hint()` and `_sample_spymaster_hint()`
+- **Guess Validation**: Validate guesses against current board within guess functions
+- **Choice Validation**: Validate yes/no responses within continue functions
+- **Error Recovery**: Graceful handling when validation fails within specific contexts
+- **Operational Logging**: Record validation failures with context about which function failed
 
-### Validation-Driven Development
-**Core Principle**: Validation logic serves as the foundation for both testing and production
+### Requirements-Based Testing Strategy
+**Core Principle**: Game rules define testable requirements that drive test case design
 
-1. **Write validation rules first** - Define what "correct" looks like
-2. **Generate test cases from rules** - Every validation rule becomes test scenarios
-3. **Use same validation in production** - Ensures consistency between dev and prod
-4. **Monitor validation results** - Real-time insights into system health
-
-## Post-MVP Enhancements (Future Phases)
-
-### Advanced Sampling Workflows
-- **Sophisticated prompt engineering**: Advanced prompting strategies beyond basic game state
-- **Strategic sampling preferences**: Difficulty preference, risk tolerance, play style customization
-- **Multi-turn reasoning**: Complex strategic planning across multiple turns
-
-### Statistics & Analytics (Post-MVP)
-- Game statistics tool for performance analysis
-- Hint effectiveness tracking using audit data
-- Strategy pattern analysis from production logs
-- Performance metrics and optimization
-
-### Learning & Analytics
-- Game analytics resources built on validation framework
-- Advanced monitoring dashboards
-- A/B testing framework for rule modifications
-
-### Production Operations
-- Automated alerting for validation failures
-- Scalability and load testing
-
-### Polish & Advanced Features
-- Multiple difficulty levels
-- Tournament mode
-- Custom word themes
-- Multi-language support
+1. **Requirements analysis** - Game rules define acceptance criteria and constraints
+2. **Test case design** - Derive test scenarios directly from game rule requirements
+3. **Test implementation** - Create test-specific validation and assertion logic
+4. **Test execution** - Verify production code behavior against requirements
 
 ## MVP Documentation Requirements
 
@@ -246,75 +218,100 @@ def validate_move_legality(card_index: int, current_role: str) -> ValidationResu
 
 ## Key Sampling Workflows
 
-### Board Generation Workflow
-1. `_elicit_board_preference()` - "Would you like to provide 25 words or have AI generate them?"
-2. **Option A**: User provides exactly 25 words via elicitation
-3. **Option B**: `_sample_word_list()` - AI generates 25 words via sampling
-4. `_validate_word_list(words)` - Apply validation rules (see word-validation-strategy.md)
-5. `_create_board_from_words(words)` - Final board with team assignments
+### Overview
+- **Board Generation**: User choice or AI generation with output validation
+- **Spymaster Turns**: Role-specific hint generation with input/output validation
+- **Team Turns**: Guess processing with input validation and choice management
+- **Information Security**: Strict role-based filtering for USER vs LLM player types
 
-### Spymaster Turn Workflow
-1. Server provides board context via resource (for LLM spymasters) or filtered status (for USER spymasters)
-2. **LLM Spymaster**: `_sample_spymaster_hint(context)` - Client samples hint using spymaster context
-3. **USER Spymaster**: `_elicit_spymaster_hint()` - Client prompts user for hint via elicitation
-4. Server validates hint legality using `_validate_hint_format()`
-5. If valid, hint is recorded and **updated game status is automatically provided** (filtered by player types)
-
-### Team Turn Workflow
-1. Server provides hint and limited board context
-2. **LLM Team**: `_sample_team_guess(context)` - Client samples guess using team context
-3. **USER Team**: `_elicit_team_guess()` - Client prompts user for guess via elicitation
-4. Server processes guess using `_validate_move_legality()` and updates board
-5. **After each guess**: Updated game status automatically provided (filtered by player types)
-6. **After each correct guess**: 
-   - **LLM Team**: `_sample_continue_guessing()` - Client samples whether to continue
-   - **USER Team**: `_elicit_continue_guessing()` - Client prompts user for choice
-7. **Team choice overrides available guesses**: Team can end turn voluntarily even with guesses remaining
-8. Turn ends when: team chooses to stop, makes incorrect guess, or exhausts all available guesses
-9. **Turn completion**: Final updated game status automatically provided (filtered by player types)
-
-### Strategic Turn Management
-**Key Rule**: Teams always have the choice to end their turn early (applies to both USER and LLM teams)
-- **Hint "1"**: After 1 correct guess → choice to continue for bonus guess
-- **Hint "2"**: After 1st correct guess → choice to attempt 2nd word
-- **Hint "2"**: After 2nd correct guess → choice to continue for bonus guess
-- **Risk vs Reward**: Teams balance getting points vs risk of hitting opponent/assassin cards
-- **USER Teams**: Choice presented via elicitation (`_elicit_continue_guessing()`)
-- **LLM Teams**: Choice made via sampling (`_sample_continue_guessing()`)
-
-### Role Isolation Strategy
-- **Sampling contexts** are strictly filtered by role and player type
-- **LLM Spymaster context**: Includes full board knowledge via sampling only
-- **USER Spymaster context**: Gets full board knowledge via filtered status display
-- **Team context**: Only includes revealed cards and current hint (both USER and LLM)
-- **Server enforcement**: Information boundaries maintained at both sampling and status levels
-- **Game status filtering**: Spymaster view only displayed when USER spymasters are present
-- **LLM spymasters**: Get full context via sampling, never via status display
-- **USER spymasters**: Get full context via filtered status display when appropriate
-- **Security guarantee**: No information leakage between roles or player types
+**Note**: See Appendix A.3 for detailed role isolation strategy and security guarantees.
 
 ## Technology Stack
 - **MCP SDK**: Latest Python MCP SDK with sampling support
 - **Game Logic**: Pure Python game state management
 - **Persistence**: JSON-based game state serialization
-- **Validation**: Custom validation logic for rules enforcement
+- **Input/Output Validation**: Boundary validation for external data
 
 ## Success Criteria
 1. **Functional MVP**: Complete game playable through MCP tools with all player type combinations
 2. **Sampling Integration**: All AI decisions via client LLM sampling (for LLM players)
 3. **Elicitation Integration**: All human decisions via client elicitation (for USER players)
-4. **Rule Compliance**: Perfect adherence to Codenames rules with integrated validation
+4. **Rule Compliance**: Perfect adherence to Codenames rules through architecture and input/output validation
 5. **Information Security**: No knowledge leakage between roles, proper filtering by player type
 6. **Documentation**: Complete API documentation and usage examples for all configurations
-
-## Future Enhancements
-- Multiple difficulty levels
-- Tournament mode with multiple games
-- Advanced analytics and learning
-- Custom word themes
-- Multi-language support
 
 ---
 *Document created: August 8, 2025*
 *Status: Design phase - ready for implementation*
 *Next Step: Begin Phase 1 - MCP Server Foundation*
+
+---
+
+## Appendix: Detailed Reference
+
+### A.1 MCP Tools Reference
+
+#### `create_new_game(red_spymaster, red_team, blue_spymaster, blue_team)`
+**Purpose**: User initiates a new game with player type configuration
+**Parameters**: Each role can be "user" (human interaction via elicitation) or "llm" (AI interaction via sampling)
+**Returns**: Initial game status and triggers internal setup sequence
+**Usage**: Only out-of-turn action that doesn't require game state validation
+
+#### `end_game()`
+**Purpose**: User terminates current game
+**Parameters**: None
+**Returns**: Confirmation of game termination
+**Usage**: Safe to call anytime, terminates all internal game processes
+
+### A.2 Internal Functions Reference
+
+#### Game State Management
+- `_switch_role_internal(role)` - Internal role management for game flow
+- `_advance_turn()` - Move to next role/team automatically
+- `_check_win_conditions()` - Game end detection
+- `_update_game_state(action)` - State management with basic sanitization
+- `_check_game_exists()` - Verify game state exists before operations
+- `_create_board_from_words(words)` - Initialize game board with team assignments
+- `_reveal_card(card_index)` - Reveal a card and update game state
+- `_get_card_team(card_index)` - Get team assignment for a specific card
+
+#### Input/Output Validation (Production Critical)
+- `_validate_word_list(words)` - Ensure word list meets technical requirements (count, format)
+
+#### Sampling & Elicitation Infrastructure
+- `_elicit_board_preference()` - Server asks user for word source, validates preference format
+- `_sample_word_list()` - Server requests word generation from LLM, validates count and format
+- `_elicit_spymaster_hint()` - Server prompts for hint (USER spymasters), validates hint format
+- `_sample_spymaster_hint()` - Server requests hint from LLM (LLM spymasters), validates hint format
+- `_elicit_team_guess()` - Server prompts for guess (USER teams), validates guess against board
+- `_sample_team_guess()` - Server requests guess from LLM (LLM teams), validates guess against board
+- `_elicit_continue_guessing()` - Server asks if team wants to continue, validates yes/no response
+- `_sample_continue_guessing()` - Server requests continuation decision from LLM, validates yes/no response
+
+#### Context Generation & Role Isolation
+- `_generate_spymaster_context()` - Create role-specific context with full board knowledge for LLM spymasters
+- `_generate_team_context()` - Create role-specific context with limited board info for LLM teams
+- `_build_dynamic_prompts()` - Generate game state-aware prompts for sampling requests
+- `_filter_context_by_role()` - Ensure appropriate information isolation in sampling contexts
+
+#### High-Level Game Flow
+- `_run_spymaster_turn()` - Complete spymaster turn sequence with validation
+- `_run_team_turn()` - Complete team turn sequence with choice management
+- `_handle_game_end()` - Process win/lose conditions
+- `_calculate_available_guesses(hint_number)` - Determine max guesses (hint_number + 1)
+- `_offer_continue_choice(remaining_guesses)` - Present strategic choice to team
+- `_determine_player_types()` - Track which roles are USER vs LLM for each team
+- `_filter_status_by_player_type()` - Show spymaster view only when USER spymasters present
+
+### A.3 Role Isolation Strategy Reference
+
+**Sampling Contexts**: Strictly filtered by role and player type
+- **LLM Spymaster context**: Includes full board knowledge via sampling only
+- **USER Spymaster context**: Gets full board knowledge via filtered status display
+- **Team context**: Only includes revealed cards and current hint (both USER and LLM)
+
+**Server Enforcement**: Information boundaries maintained at both sampling and status levels
+- **Game status filtering**: Spymaster view only displayed when USER spymasters are present
+- **LLM spymasters**: Get full context via sampling, never via status display
+- **USER spymasters**: Get full context via filtered status display when appropriate
+- **Security guarantee**: No information leakage between roles or player types
