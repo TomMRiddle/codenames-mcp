@@ -82,18 +82,18 @@ TC-001-3 Empty Board Until Initialization
 **Priority**: Medium  
 **Risk**: Medium  
 
-**Description**: The system shall allow adding players to a game with specified roles and types.
+**Description**: The system shall allow adding exactly 4 players to a game with specified roles and types for MVP scope.
 
 **System Constraints**:
 - SC-002-1: Player name: non-empty string, max 50 characters [Tested by: TC-002-2]
 - SC-002-2: Player type: must be "USER" or "LLM" [Tested by: TC-002-3]
-- SC-002-3: Maximum 8 players per game [Tested by: TC-002-4]
-- SC-002-4: Minimum 4 players to start game [Tested by: TC-002-1]
+- SC-002-3: Exactly 4 players required (MVP scope) [Tested by: TC-002-4]
+- SC-002-4: Players assigned as: 1 red spymaster, 1 red operative, 1 blue spymaster, 1 blue operative [Tested by: TC-002-1]
 
 **Acceptance Criteria**:
 - AC-002-1: GIVEN a waiting game, WHEN adding a player with name and type (USER/LLM), THEN player is added successfully [Tested by: TC-002-1]
 - AC-002-2: GIVEN a game with players, WHEN querying players, THEN correct player list with roles is returned [Tested by: TC-002-1]
-- AC-002-3: GIVEN a game with 4+ players, WHEN checking if ready, THEN game can be started [Tested by: TC-002-1]
+- AC-002-3: GIVEN a game with exactly 4 players, WHEN checking if ready, THEN game can be started [Tested by: TC-002-1]
 - AC-002-4: GIVEN a game with <4 players, WHEN checking if ready, THEN game cannot be started [Tested by: TC-002-1]
 
 **Test Cases**:
@@ -102,11 +102,15 @@ TC-001-3 Empty Board Until Initialization
 
 TC-002-1 Valid Player Addition
     [Tags]    AC-002-1    AC-002-2    AC-002-3    AC-002-4    SC-002-4
-    [Documentation]    Test successful player addition to game
+    [Documentation]    Test successful player addition to 4-player game
     Given Game Waiting For Players
-    When Add Player    Alice    USER
-    Then Player Is Added Successfully
-    And Player List Shows    Alice    USER
+    When Add Player    Red_Spymaster    USER
+    And Add Player    Red_Operative    LLM
+    And Add Player    Blue_Spymaster    LLM  
+    And Add Player    Blue_Operative    USER
+    Then All 4 Players Are Added Successfully
+    And Player Roles Are Assigned Correctly
+    And Game Is Ready To Start
 
 TC-002-2 Invalid Player Name Validation
     [Tags]    SC-002-1
@@ -124,12 +128,12 @@ TC-002-3 Invalid Player Type Validation
     Then Error Is Returned    Player type must be USER or LLM
     And Player Is Not Added To Game
 
-TC-002-4 Maximum Players Validation
+TC-002-4 Exactly 4 Players Required
     [Tags]    SC-002-3
-    [Documentation]    Test maximum player limit enforcement
-    Given Game With Players    8
-    When Try To Add Another Player
-    Then Error Is Returned    Maximum 8 players allowed
+    [Documentation]    Test exactly 4 players required for MVP
+    Given Game With 4 Players Already Added
+    When Try To Add Fifth Player
+    Then Error Is Returned    Game requires exactly 4 players (MVP)
     And Player Is Not Added To Game
 ```
 
@@ -139,10 +143,10 @@ TC-002-4 Maximum Players Validation
 **Priority**: High  
 **Risk**: High  
 
-**Description**: The system shall generate a 5x5 board with 25 words and assign team colors.
+**Description**: The system shall generate a 5x5 board with 25 words using MCP "sample" primitive and assign team colors.
 
 **System Constraints**:
-- SC-003-1: Must generate exactly 25 unique words [Tested by: TC-003-1]
+- SC-003-1: Must generate exactly 25 unique words using MCP "sample" primitive [Tested by: TC-003-1]
 - SC-003-2: Must assign exactly 9 red cards, 8 blue cards, 7 neutral cards, and 1 assassin card [Tested by: TC-003-2]
 - SC-003-3: Each position (0-24) must have exactly one word [Tested by: TC-003-1]
 - SC-003-4: All words must be unique on the board [Tested by: TC-003-3]
@@ -151,7 +155,7 @@ TC-002-4 Maximum Players Validation
 - SC-003-7: Words must be between 3-12 characters [Tested by: TC-003-4]
 
 **Acceptance Criteria**:
-- AC-003-1: GIVEN a game ready to start, WHEN generate_board is called, THEN exactly 25 unique words are placed [Tested by: TC-003-1]
+- AC-003-1: GIVEN a game ready to start, WHEN generate_board is called, THEN exactly 25 unique words are placed using MCP sample [Tested by: TC-003-1]
 - AC-003-2: GIVEN a generated board, WHEN checking assignments, THEN exactly 9 red cards, 8 blue cards, 7 neutral cards, and 1 assassin card exist [Tested by: TC-003-2]
 - AC-003-3: GIVEN a generated board, WHEN querying word positions, THEN each position (0-24) has exactly one word [Tested by: TC-003-1]
 - AC-003-4: GIVEN a generated board, WHEN checking for duplicates, THEN all words are unique [Tested by: TC-003-3]
@@ -162,11 +166,12 @@ TC-002-4 Maximum Players Validation
 
 TC-003-1 Standard Board Generation
     [Tags]    AC-003-1    AC-003-3    SC-003-1    SC-003-3
-    [Documentation]    Test standard 5x5 board generation with unique words
+    [Documentation]    Test standard 5x5 board generation using MCP sample
     Given Game Ready To Start
-    When Generate Board Is Called
+    When Generate Board Using MCP Sample
     Then Exactly 25 Unique Words Are Placed
     And Each Position 0-24 Has Exactly One Word
+    And MCP Sample Primitive Was Used
 
 TC-003-2 Color Assignment Validation
     [Tags]    AC-003-2    SC-003-2
@@ -251,32 +256,32 @@ TC-004-3 Blue Team Starts
 **Priority**: High  
 **Risk**: High  
 
-**Description**: The system shall assign one spymaster per team from available players.
+**Description**: The system shall assign exactly one spymaster per team (2 total) from the 4 players.
 
 **System Constraints**:
-- SC-005-1: Each team must have exactly one spymaster [Tested by: TC-005-1]
-- SC-005-2: Spymasters cannot be operatives simultaneously [Tested by: TC-005-1]
-- SC-005-3: Team sizes should be balanced (±1 player) [Tested by: TC-005-1]
+- SC-005-1: Exactly one red spymaster and one blue spymaster [Tested by: TC-005-1]
+- SC-005-2: Remaining 2 players become operatives (1 red, 1 blue) [Tested by: TC-005-1]
+- SC-005-3: Role assignment must be deterministic for 4-player game [Tested by: TC-005-1]
 
 **Acceptance Criteria**:
-- AC-005-1: GIVEN players ready for role assignment, WHEN assign_spymasters is called, THEN exactly one spymaster per team is assigned [Tested by: TC-005-1]
-- AC-005-2: GIVEN spymaster assignment, WHEN checking player roles, THEN spymasters have role "spymaster" [Tested by: TC-005-1]
-- AC-005-3: GIVEN spymaster assignment, WHEN checking remaining players, THEN non-spymasters have role "operative" [Tested by: TC-005-1]
-- AC-005-4: GIVEN team assignments, WHEN checking balance, THEN teams have equal number of players (±1) [Tested by: TC-005-1]
+- AC-005-1: GIVEN 4 players ready for role assignment, WHEN assign_spymasters is called, THEN exactly one spymaster per team is assigned [Tested by: TC-005-1]
+- AC-005-2: GIVEN spymaster assignment, WHEN checking player roles, THEN 2 spymasters and 2 operatives are assigned [Tested by: TC-005-1]
+- AC-005-3: GIVEN role assignment, WHEN checking teams, THEN each team has exactly 1 spymaster and 1 operative [Tested by: TC-005-1]
 
 **Test Cases**:
 ```robot
 *** Test Cases ***
 
-TC-005-1 Spymaster Assignment
-    [Tags]    AC-005-1    AC-005-2    AC-005-3    AC-005-4    SC-005-1    SC-005-2    SC-005-3
-    [Documentation]    Test assignment of spymasters and operatives with balanced teams
-    Given Players Ready For Role Assignment
+TC-005-1 4-Player Role Assignment
+    [Tags]    AC-005-1    AC-005-2    AC-005-3    SC-005-1    SC-005-2    SC-005-3
+    [Documentation]    Test assignment of roles in 4-player game
+    Given 4 Players Ready For Role Assignment
     When Assign Spymasters Is Called
-    Then Exactly One Spymaster Per Team Is Assigned
-    And Spymasters Have Role    spymaster
-    And Non-Spymasters Have Role    operative
-    And Teams Have Equal Number Of Players Plus Or Minus 1
+    Then Exactly One Red Spymaster Is Assigned
+    And Exactly One Blue Spymaster Is Assigned
+    And Exactly One Red Operative Is Assigned
+    And Exactly One Blue Operative Is Assigned
+    And Each Team Has 1 Spymaster And 1 Operative
 ```
 
 #### FR-006: Role-Based Information Access
