@@ -32,8 +32,9 @@ This file provides a concise, actionable workflow for autonomous AI agents devel
    - Output: Clean, maintainable code and updated docs.
 
 5. **Integrate & Validate**
-   - Run integration and end-to-end tests.
-   - Verify MCP protocol compliance and acceptance criteria.
+   - All Python code changes are automatically formatted, linted, tested, and checked for coverage via pre-commit hooks.
+   - Pre-commit runs the full test suite and enforces coverage only when Python files are changed in a commit.
+   - If any part of the MCP server implementation is non-Python, reevaluate the pre-commit configuration to ensure it covers all new additions and maintains project standards.
    - Output: Test results and defect reports.
 
 6. **Review & Document**
@@ -60,7 +61,6 @@ Testing is central to the Codenames MCP Server project and follows a test-driven
 2. **Test Implementation**
    - Use FastMCP's in-memory transport for fast, isolated tests by passing the server instance directly to the client.
    - Organize all tests in the `tests/` directory and run with `pytest`.
-   - For coverage, use `pytest --cov=src --cov=examples --cov-report=html`.
    - Capture logs with `caplog_for_fastmcp(caplog)` for assertions.
    - Use `ctx.debug`, `ctx.info`, `ctx.warning`, and `ctx.error` for structured logging in tools.
    - Use `ctx.elicit` for structured user input and `ctx.sample` for LLM-based text generation in tests.
@@ -72,9 +72,7 @@ Testing is central to the Codenames MCP Server project and follows a test-driven
 
 4. **Recommended Testing Steps**
    - Install dependencies: `poetry install`
-   - Run pre-commit hooks: `poe lint` (or your configured linting task)
-   - Run tests: `poe test`
-   - Measure coverage: `poe test --cov=src --cov=examples --cov-report=html` (if coverage is configured in Poe)
+   - Run pre-commit hooks: All code is automatically formatted, linted, tested, and checked for coverage on every commit.
 
 5. **Success Criteria**
    - >85% test coverage

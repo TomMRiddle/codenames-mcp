@@ -1,6 +1,6 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-norecursedirs = [".venv", "__pycache__", "scripts"]
+norecursedirs = [".venv", "__pycache__", "scripts", "docs", ".pytest_cache"]
 addopts = "--import-mode=importlib"
 
 [tool.poetry]
