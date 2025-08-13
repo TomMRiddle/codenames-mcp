@@ -59,8 +59,3 @@ extend-exclude = '''
     (.*_pb2.py)
 '''
 
-[tool.flake8]
-max-line-length = 88
-extend-ignore = ["E203", "E701"]
-select = ["B", "C", "E", "F", "W", "BLK"]
-require-plugins = ["flake8-black"]

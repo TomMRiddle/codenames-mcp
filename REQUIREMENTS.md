@@ -1,6 +1,3 @@
-
-
-
 # AI Agent Development Workflow
 
 ## Purpose
@@ -10,27 +7,10 @@ This file provides a concise, actionable workflow for autonomous AI agents devel
 - `pyproject.toml`: Single source of truth for dependencies, automation, and tool configuration.
 - `docs/`: Authoritative documentation for architecture, requirements, and standards.
 
-## Workflow Steps
-
 **Note:** The `poethepoet` plugin is installed globally using `poetry self add poethepoet` due to Poetry's plugin requirements on Windows. It is not listed as a project dependency in `pyproject.toml`.
 
-## Reproducible Git Commit & Push Steps
-1. Install dependencies:
-   - `poetry install`
-   - This ensures all required packages are available for tests run by pre-commit hooks. If dependencies are missing, pre-commit test and coverage hooks may fail.
-2. Stage all changes:
-   - `git add .`
-3. Check status and review changes:
-   - `git status --short`
-   - `git diff --cached` (to see staged changes)
-4. Write a commit message summarizing the actual changes:
-   - Focus only on what was modified (e.g., updated docs, config, code, etc.)
-5. Commit changes:
-   - `git commit -m "<concise, accurate message>"`
-6. Push to remote:
-   - `git push`
-7. Verify on remote (optional):
-   - Check repository on GitHub or use `git log` to confirm.
+## Workflow Steps
+
 1. **Analyze Requirements**
    - Extract user stories, acceptance criteria, and risk areas from documentation.
    - Identify interfaces, dependencies, and testability needs.
@@ -43,7 +23,7 @@ This file provides a concise, actionable workflow for autonomous AI agents devel
 
 3. **Implement Minimal Code**
    - Write only enough code to pass the tests.
-   - Commit after each passing test; keep changes small and focused.
+   - Commit after each passing test; keep changes small and focused. (Section "Git commit steps" for instructions)
    - Output: Working code that passes all tests (Green phase).
 
 4. **Refactor for Quality**
@@ -65,6 +45,23 @@ This file provides a concise, actionable workflow for autonomous AI agents devel
 ## Quality Gates
 - **Ready:** Requirements and acceptance criteria are clear; dependencies identified.
 - **Done:** All tests pass; code reviewed; documentation updated; no critical defects.
+
+## Git commit steps
+1. Install dependencies:
+   - `poetry install`
+   - This ensures all required packages are available for tests run by pre-commit hooks. If dependencies are missing, pre-commit test and coverage hooks may fail.
+2. Stage all changes:
+   - `git add .`
+3. Check status and review changes:
+   - `git status --short`
+   - `git diff --cached` (to see staged changes)
+   - **Note:** Check for any manual changes in REQUIREMENTS.md before committing.
+4. Write a commit message summarizing the actual changes:
+   - Focus only on what was modified (e.g., updated docs, config, code, etc.)
+5. Commit changes:
+   - `git commit -m "<concise, accurate message>"`
+6. Push to remote:
+   - `git push`
 
 ## Testing Strategy
 
@@ -114,4 +111,3 @@ Refer to FastMCP documentation for advanced patterns, file organization, and ext
 - Request clarification if context is missing or ambiguous.
 - Automate, validate, and document every change for reproducibility.
    - Follows best practices for formatting (Black), linting (Flake8, flake8-black), and CI/CD.
-

@@ -42,8 +42,15 @@ def main():
     for line in output.splitlines():
         if "TOTAL" in line and "%" in line:
             percent = float(line.split()[-1].replace("%", ""))
+            # Always generate HTML report
+            subprocess.run([sys.executable, "-m", "coverage", "html"])
             if percent < MIN_COVERAGE:
-                print(f"Coverage {percent}% below required.")
+                print(f"Coverage {percent}% below required. Opening HTML report...")
+                import webbrowser
+                import os
+
+                html_report = os.path.abspath("htmlcov/index.html")
+                webbrowser.open(f"file://{html_report}")
                 sys.exit(1)
             else:
                 print(f"Coverage {percent}% meets requirement.")
