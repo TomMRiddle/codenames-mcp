@@ -11,6 +11,21 @@ This file provides a concise, actionable workflow for autonomous AI agents devel
 - `docs/`: Authoritative documentation for architecture, requirements, and standards.
 
 ## Workflow Steps
+
+## Reproducible Git Commit & Push Steps
+1. Stage all changes:
+   - `git add .`
+2. Check status and review changes:
+   - `git status --short`
+   - `git diff --cached` (to see staged changes)
+3. Write a commit message summarizing the actual changes:
+   - Focus only on what was modified (e.g., updated docs, config, code, etc.)
+4. Commit changes:
+   - `git commit -m "<concise, accurate message>"`
+5. Push to remote:
+   - `git push`
+6. Verify on remote (optional):
+   - Check repository on GitHub or use `git log` to confirm.
 1. **Analyze Requirements**
    - Extract user stories, acceptance criteria, and risk areas from documentation.
    - Identify interfaces, dependencies, and testability needs.
@@ -60,7 +75,7 @@ Testing is central to the Codenames MCP Server project and follows a test-driven
 
 2. **Test Implementation**
    - Use FastMCP's in-memory transport for fast, isolated tests by passing the server instance directly to the client.
-   - Organize all tests in the `tests/` directory and run with `pytest`.
+   - Organize all tests in the `tests/`.
    - Capture logs with `caplog_for_fastmcp(caplog)` for assertions.
    - Use `ctx.debug`, `ctx.info`, `ctx.warning`, and `ctx.error` for structured logging in tools.
    - Use `ctx.elicit` for structured user input and `ctx.sample` for LLM-based text generation in tests.
@@ -72,7 +87,7 @@ Testing is central to the Codenames MCP Server project and follows a test-driven
 
 4. **Recommended Testing Steps**
    - Install dependencies: `poetry install`
-   - Run pre-commit hooks: All code is automatically formatted, linted, tested, and checked for coverage on every commit.
+   - Runs automatically on pre-commit hooks: All code is formatted, linted, tested, and checked for coverage on every commit.
 
 5. **Success Criteria**
    - >85% test coverage
