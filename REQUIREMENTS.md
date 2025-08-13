@@ -13,18 +13,21 @@ This file provides a concise, actionable workflow for autonomous AI agents devel
 ## Workflow Steps
 
 ## Reproducible Git Commit & Push Steps
-1. Stage all changes:
+1. Install dependencies:
+   - `poetry install`
+   - This ensures all required packages are available for tests run by pre-commit hooks. If dependencies are missing, pre-commit test and coverage hooks may fail.
+2. Stage all changes:
    - `git add .`
-2. Check status and review changes:
+3. Check status and review changes:
    - `git status --short`
    - `git diff --cached` (to see staged changes)
-3. Write a commit message summarizing the actual changes:
+4. Write a commit message summarizing the actual changes:
    - Focus only on what was modified (e.g., updated docs, config, code, etc.)
-4. Commit changes:
+5. Commit changes:
    - `git commit -m "<concise, accurate message>"`
-5. Push to remote:
+6. Push to remote:
    - `git push`
-6. Verify on remote (optional):
+7. Verify on remote (optional):
    - Check repository on GitHub or use `git log` to confirm.
 1. **Analyze Requirements**
    - Extract user stories, acceptance criteria, and risk areas from documentation.
@@ -95,9 +98,6 @@ Testing is central to the Codenames MCP Server project and follows a test-driven
    - No critical defects
 
 Refer to FastMCP documentation for advanced patterns, file organization, and extension points for testing MCP tools and protocols.
-
-
-
 
 ## Metrics
 - Track time per workflow step, test coverage, defects, and requirements completion.
