@@ -1,0 +1,26 @@
+repos:
+  - repo: local
+    hooks:
+      - id: format
+        name: Format code with Black
+        entry: poetry run black src tests
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: lint
+        name: Lint code with Flake8
+        entry: poetry run flake8 src tests
+        language: system
+        types: [python]
+        always_run: true
+      - id: test
+        name: Run tests
+        entry: poetry run pytest tests --maxfail=2 --disable-warnings
+        language: system
+        types: [python]
+        always_run: true
+      - id: coverage-check
+        name: Check test coverage
+        entry: poetry run python scripts/.precommit_coverage_check.py
+        language: system
+        types: [python]
