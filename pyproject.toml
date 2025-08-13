@@ -2,8 +2,6 @@
 testpaths = ["tests"]
 norecursedirs = [".venv", "__pycache__", "scripts"]
 addopts = "--import-mode=importlib"
-collect_ignore = ["scripts/.precommit_coverage_check.py"]
-env = ["PYTHONPATH=src"]
 
 [tool.poetry]
 name = "codenames-mcp"
