@@ -17,13 +17,28 @@ def main():
             "--cov=src",
             "--cov=examples",
             "--cov-report=term",
+        ]
+    )
+
+    if result.returncode != 0:
+        sys.exit(result.returncode)
+
+    # After successful test run, check coverage
+    # Run pytest again with coverage output captured
+    coverage_result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "--cov=src",
+            "--cov=examples",
+            "--cov-report=term",
         ],
         capture_output=True,
         text=True,
     )
 
-    output = result.stdout
-
+    output = coverage_result.stdout
     for line in output.splitlines():
         if "TOTAL" in line and "%" in line:
             percent = float(line.split()[-1].replace("%", ""))

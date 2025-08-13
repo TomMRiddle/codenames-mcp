@@ -1,1 +1,22 @@
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+
+# VS Code settings
+.vscode/
+
+# Poetry files
+poetry.lock
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Misc
+*.log
+*.tmp
+

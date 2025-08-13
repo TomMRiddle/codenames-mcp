@@ -13,12 +13,6 @@ repos:
         language: system
         types: [python]
         always_run: true
-      - id: test
-        name: Run tests
-        entry: poetry run pytest tests --maxfail=2 --disable-warnings
-        language: system
-        types: [python]
-        always_run: true
       - id: coverage-check
         name: Check test coverage
         entry: poetry run python scripts/.precommit_coverage_check.py
