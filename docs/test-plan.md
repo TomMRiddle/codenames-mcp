@@ -1,17 +1,31 @@
-# Test Plan - Codenames MCP Server
 
-## 1. Test Plan Identifier
+## 1. Test Plan - Codenames MCP Server
+
+### 1.1 Table of Contents
+1. Test Plan Identifier
+2. Introduction
+   - 2.1 Purpose
+   - 2.2 Scope
+3. Test Items
+   - 3.1 Primary Test Items
+   - 3.2 Supporting Test Items
+4. Features to be Tested
+   - Functional Features
+   - Non-Functional Features
+... (continue for all major sections)
+
+## 2. Test Plan Identifier
 **Project**: Codenames MCP Server  
 **Version**: 1.0  
 **Date**: August 11, 2025  
 **Author**: Development Team  
 
-## 2. Introduction
+## 3. Introduction
 
-### 2.1 Purpose
+### 3.1 Purpose
 This test plan defines the testing approach, strategy, and activities for the Codenames MCP Server project. The plan ensures comprehensive testing of game logic, MCP protocol compliance, and integration capabilities.
 
-### 2.2 Scope
+### 3.2 Scope
 **In Scope**:
 - Core game logic and state management
 - MCP protocol implementation (tools, resources, sampling)
@@ -27,9 +41,9 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - Performance testing (covered separately)
 - Security penetration testing
 
-## 3. Test Items
+## 4. Test Items
 
-### 3.1 Primary Test Items
+### 4.1 Primary Test Items
 1. **Game Engine Core**
    - Game state management
    - Board generation and word assignment
@@ -53,15 +67,15 @@ This test plan defines the testing approach, strategy, and activities for the Co
    - User vs LLM player handling
    - Permission validation
 
-### 3.2 Supporting Test Items
+### 4.2 Supporting Test Items
 - Configuration management
 - Error handling and logging
 - Data serialization/persistence
 - Client communication protocols
 
-## 4. Features to be Tested
+## 5. Features to be Tested
 
-### 4.1 Functional Features
+### 5.1 Functional Features
 | Feature ID | Feature Name | Priority | Risk Level |
 |------------|--------------|----------|------------|
 | F001 | Game Initialization | High | High |
@@ -77,7 +91,7 @@ This test plan defines the testing approach, strategy, and activities for the Co
 | F011 | Input Validation | Medium | Medium |
 | F012 | Error Handling | Medium | Low |
 
-### 4.2 Non-Functional Features
+### 5.2 Non-Functional Features
 | Feature ID | Feature Name | Priority | Risk Level |
 |------------|--------------|----------|------------|
 | NF001 | MCP Protocol Compliance | High | Medium |
@@ -85,15 +99,15 @@ This test plan defines the testing approach, strategy, and activities for the Co
 | NF003 | Multi-client Support | Medium | Medium |
 | NF004 | State Consistency | High | High |
 
-## 5. Features Not to be Tested
+## 6. Features Not to be Tested
 - Third-party MCP client internal implementations
 - Network layer security (assumes secure transport)
 - Operating system specific functionality
 - Hardware-specific performance characteristics
 
-## 6. Test Approach
+## 7. Test Approach
 
-### 6.1 Testing Strategy
+### 7.1 Testing Strategy
 **Test-Driven Development (TDD)**:
 - Write tests before implementation
 - Red-Green-Refactor cycle for all features
@@ -114,9 +128,9 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - Test error handling paths
 - Validate state transitions
 
-### 6.2 Test Levels
+### 7.2 Test Levels
 
-#### 6.2.1 Unit Testing (70% of test effort)
+#### 7.2.1 Unit Testing (70% of test effort)
 **Scope**: Individual functions and classes
 **Tools**: pytest, unittest.mock
 **Coverage Target**: >90% for game logic, >80% overall
@@ -128,7 +142,7 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - Validation functions
 - Utility functions
 
-#### 6.2.2 Integration Testing (20% of test effort)
+#### 7.2.2 Integration Testing (20% of test effort)
 **Scope**: Component interactions and MCP protocol
 **Tools**: pytest with integration fixtures
 **Coverage Target**: All major integration points
@@ -140,7 +154,7 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - Client-server communication
 - State persistence and retrieval
 
-#### 6.2.3 System Testing (10% of test effort)
+#### 7.2.3 System Testing (10% of test effort)
 **Scope**: End-to-end game scenarios
 **Tools**: MCP client simulators, manual testing
 **Coverage Target**: All user journeys
@@ -152,23 +166,23 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - Error recovery scenarios
 - Performance validation
 
-### 6.3 Test Techniques
+### 7.3 Test Techniques
 
-#### 6.3.1 Functional Testing Techniques
+#### 7.3.1 Functional Testing Techniques
 - **Equivalence Partitioning**: Group similar inputs (valid/invalid clues)
 - **Boundary Value Analysis**: Test edge cases (word counts, player limits)
 - **Decision Table Testing**: Complex game rule scenarios
 - **State Transition Testing**: Game state changes
 - **Use Case Testing**: End-to-end game scenarios
 
-#### 6.3.2 Structural Testing Techniques
+#### 7.3.2 Structural Testing Techniques
 - **Statement Coverage**: All code paths executed
 - **Branch Coverage**: All decision outcomes tested
 - **Path Coverage**: Critical path combinations tested
 
-## 7. Pass/Fail Criteria
+## 8. Pass/Fail Criteria
 
-### 7.1 Item Pass/Fail Criteria
+### 8.1 Item Pass/Fail Criteria
 **Pass Criteria**:
 - All specified requirements met
 - No critical or high-severity defects
@@ -183,7 +197,7 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - Test coverage below threshold
 - Performance degradation
 
-### 7.2 Suspension/Resumption Criteria
+### 8.2 Suspension/Resumption Criteria
 **Suspension Criteria**:
 - >20% of tests failing
 - Critical infrastructure issues
@@ -194,41 +208,41 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - Test environment restored
 - Risk assessment completed
 
-## 8. Test Deliverables
+## 9. Test Deliverables
 
-### 8.1 Test Planning Phase
+### 9.1 Test Planning Phase
 - [ ] Test Plan (this document)
 - [ ] Requirements Specification
 - [ ] Test Strategy Document
 - [ ] Risk Assessment
 
-### 8.2 Test Analysis/Design Phase
+### 9.2 Test Analysis/Design Phase
 - [ ] Test Case Specifications
 - [ ] Test Data Requirements
 - [ ] Test Environment Setup Guide
 - [ ] Mock/Stub Specifications
 
-### 8.3 Test Implementation Phase
+### 9.3 Test Implementation Phase
 - [ ] Test Scripts (pytest files)
 - [ ] Test Data Sets
 - [ ] Test Environment Configuration
 - [ ] Automated Test Suites
 
-### 8.4 Test Execution Phase
+### 9.4 Test Execution Phase
 - [ ] Test Execution Reports
 - [ ] Defect Reports
 - [ ] Test Coverage Reports
 - [ ] Performance Test Results
 
-### 8.5 Test Closure Phase
+### 9.5 Test Closure Phase
 - [ ] Test Summary Report
 - [ ] Lessons Learned Document
 - [ ] Test Metrics Analysis
 - [ ] Recommendations for Future Testing
 
-## 9. Environmental Needs
+## 10. Environmental Needs
 
-### 9.1 Test Environment Requirements
+### 10.1 Test Environment Requirements
 **Hardware**:
 - Development machine (Windows/Linux/macOS)
 - Minimum 8GB RAM, 4 CPU cores
@@ -241,42 +255,42 @@ This test plan defines the testing approach, strategy, and activities for the Co
 - MCP client simulator/test harness
 - Git for version control
 
-### 9.2 Test Data Requirements
+### 10.2 Test Data Requirements
 - Sample word lists (various difficulties)
 - Game state snapshots for testing
 - Invalid input datasets
 - Performance test scenarios
 - Edge case datasets
 
-## 10. Responsibilities
+## 11. Responsibilities
 
-### 10.1 Test Manager Responsibilities
+### 11.1 Test Manager Responsibilities
 - Test planning and strategy
 - Resource allocation
 - Risk management
 - Progress reporting
 
-### 10.2 Test Analyst Responsibilities
+### 11.2 Test Analyst Responsibilities
 - Test case design
 - Requirements analysis
 - Test data preparation
 - Defect analysis
 
-### 10.3 Test Executor Responsibilities
+### 11.3 Test Executor Responsibilities
 - Test execution
 - Result recording
 - Defect reporting
 - Environment maintenance
 
-### 10.4 Developer Responsibilities
+### 11.4 Developer Responsibilities
 - Unit test creation
 - Test fixture development
 - Defect fixing
 - Test environment support
 
-## 11. Staffing and Training
+## 12. Staffing and Training
 
-### 11.1 Staffing Needs
+### 12.1 Staffing Needs
 - 1 Developer/Tester (combined role)
 - MCP protocol knowledge required
 - Python testing framework experience

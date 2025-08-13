@@ -1,9 +1,20 @@
-# Codenames MCP Server - Project Plan
 
-## Overview
+## 1. Codenames MCP Server - Project Plan
+
+### 1.1 Table of Contents
+1. Overview
+2. Key Architecture Principles
+3. MVP Implementation Strategy
+   - Phase 1: MCP Server Foundation with Sampling
+   - Phase 2: Game State & Internal Logic (with Input/Output Validation)
+   - Phase 3: MCP Tools Interface (Minimal External Interface)
+   - Phase 4: Internal Game Flow Management (MCP-Initiated Sequences)
+4. Architecture: MCP Tools vs Internal Flow Management
+
+## 2. Overview
 A standalone Model Context Protocol (MCP) server that implements a complete Codenames game experience. The server provides pure game logic and state management while leveraging the client's LLM capabilities through MCP sampling for all AI decisions.
 
-## Key Architecture Principles
+## 3. Key Architecture Principles
 1. **No Built-in AI**: Server contains only game logic, rules, and state management
 2. **Client LLM Sampling**: Use MCP sampling to get all AI decisions from the connected LLM
 3. **Pure Game Engine**: Focus on providing comprehensive game tools and resources
@@ -11,7 +22,7 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 5. **Sampling-driven Gameplay**: All intelligent decisions come from client LLM via sampling requests
 6. **Player Type Security**: Information access controlled by whether roles are USER (human) or LLM (AI)
 
-## MVP Implementation Strategy
+## 4. MVP Implementation Strategy
 
 **Core MVP Phases (1-4)**: Integrated development with validation throughout
 - Phase 1: MCP Server Foundation with sampling capabilities
@@ -25,7 +36,7 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 - Clear separation: MCP Tools (external) vs Internal Functions (server logic)
 - Operational monitoring separate from test validation
 
-### Phase 1: MCP Server Foundation with Sampling
+### 4.1 Phase 1: MCP Server Foundation with Sampling
 **Goal**: Establish basic MCP server with sampling capabilities
 
 1. **Initialize MCP Python project with sampling support**
@@ -40,7 +51,7 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
    - **Role-based sampling contexts**: Essential infrastructure for spymaster vs team information isolation
    - **Dynamic prompt generation**: Game state-aware prompts for effective LLM sampling
 
-### Phase 2: Game State & Internal Logic (with Input/Output Validation)
+### 4.2 Phase 2: Game State & Internal Logic (with Input/Output Validation)
 **Goal**: Implement core game mechanics with validation at system boundaries
 
 3. **Core game state management (with basic validation)**
@@ -54,7 +65,7 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
    - State management: `_switch_role_internal()`, `_update_game_state()`, `_check_game_exists()`
    - Board operations: `_create_board_from_words()`, `_reveal_card()`, `_get_card_team()`
    
-   **Note**: See Appendix A.2 for complete function specifications.
+   **Note**: See Section 12.2 for complete function specifications.
 
 5. **MCP Resources for game context**
    - `game://rules/codenames` - Complete game rules and mechanics
@@ -62,16 +73,16 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
    - `game://state/history` - Move and hint history
    - `game://context/current-role` - Active role context (spymaster/team, filtered by player type)
 
-### Phase 3: MCP Tools Interface (Minimal External Interface)
+### 4.3 Phase 3: MCP Tools Interface (Minimal External Interface)
 **Goal**: Provide minimal external interface - only out-of-turn actions
 
 6. **Essential MCP Tools (only out-of-turn actions)**
    - `create_new_game(red_spymaster, red_team, blue_spymaster, blue_team)` - User initiates new game with player type configuration
    - `end_game()` - User terminates current game
 
-**Note**: All turn-based actions are handled internally by the server. See Appendix A.1 for detailed tool specifications.
+**Note**: All turn-based actions are handled internally by the server. See Section 12.1 for detailed tool specifications.
 
-### Phase 4: Internal Game Flow Management (MCP-Initiated Sequences)
+### 4.4 Phase 4: Internal Game Flow Management (MCP-Initiated Sequences)
 **Goal**: Server manages all turn-based interactions internally
 
 7. **Internal turn management**
@@ -93,22 +104,22 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
    - Game state: `_handle_game_end()`, `_determine_player_types()`, `_filter_status_by_player_type()`
    - Choice management: `_calculate_available_guesses()`, `_offer_continue_choice()`
 
-**Note**: See Appendix A.2 for complete function specifications.
+**Note**: See Section 12.2 for complete function specifications.
 
 **Note**: All external inputs (through tool calls, sampling and elicitation) undergo context-specific validation within the functions that handle them, before applying changes to game state.
 
 ---
 
-## Architecture: MCP Tools vs Internal Flow Management
+## 5. Architecture: MCP Tools vs Internal Flow Management
 
-### MCP Tools (Minimal External Interface)
+### 5.1 MCP Tools (Minimal External Interface)
 **Only out-of-turn actions:**
 - `create_new_game()` - User starts new game with player type configuration 
 - `end_game()` - User terminates game
 
-**Player Types**: "user" (human via elicitation) or "llm" (AI via sampling). See Appendix A.1 for details.
+**Player Types**: "user" (human via elicitation) or "llm" (AI via sampling). See Section 12.1 for details.
 
-### Internal Flow Management (MCP-Initiated)
+### 5.2 Internal Flow Management (MCP-Initiated)
 **All turn-based interactions managed by server with automatic status updates:**
 - **Board Setup**: Server elicits preferences and samples words during `create_new_game()`
 - **Spymaster Turns**: Server elicits hints (USER) or samples hints (LLM), validates internally, and provides role-appropriate status
@@ -116,7 +127,7 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 - **Role Switching**: Server advances turns automatically with status updates
 - **Information Isolation**: Server filters contexts and status information based on player types (USER vs LLM)
 
-### Key Benefits of This Architecture
+### 5.3 Key Benefits of This Architecture
 1. **No illegal tool calls**: User can't make moves out of turn
 2. **Architecture prevents errors**: Server controls all legal actions through design
 3. **Cleaner interface**: Only 2 external tools needed
@@ -125,7 +136,7 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 6. **Better UX**: User just creates game and receives continuous updates as it progresses
 7. **Information security**: Spymaster view only shown when USER spymasters are present
 
-### Architecture Benefits
+### 5.4 Architecture Benefits
 **Architecture and validation work together:**
 - Phase 2: Context-specific validation within game logic functions, internal logic controlled by architecture
 - Phase 3: MCP tools validate inputs within their specific contexts before state changes
@@ -134,16 +145,16 @@ A standalone Model Context Protocol (MCP) server that implements a complete Code
 
 ---
 
-## MCP Input/Output Validation Patterns
+## 6. MCP Input/Output Validation Patterns
 
-### Schema-Based Validation (from MCP SDK patterns)
+### 6.1 Schema-Based Validation (from MCP SDK patterns)
 - **JSON Schema**: Use inputSchema for tool parameters and output validation
 - **Type Safety**: Leverage Python type hints for automatic schema generation
 - **Structured Responses**: Return structured data with proper error handling
 
-### Input Validation Functions
+### 6.2 Input Validation Functions
 ```python
-# MCP SDK pattern for input validation
+#### 6.2.1 MCP SDK pattern for input validation
 @server.call_tool()
 async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     if name == "create_new_game":
@@ -158,12 +169,12 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
     raise ValueError(f"Unknown tool: {name}")
 ```
 
-### Error Handling Best Practices
+### 6.3 Error Handling Best Practices
 - **Specific Exceptions**: Raise ValueError for invalid inputs, not generic Exception
 - **Structured Error Responses**: Provide clear error messages for debugging
 - **Input Sanitization**: Clean and validate external data at system boundaries
 
-### Integration with Testing & Production
+### 6.4 Integration with Testing & Production
 - **Requirements-based test design**: Game rules drive systematic test case creation
 - **Separate validation concerns**: Production validation built into business logic, test validation in test suites
 - **Independent verification**: Tests verify production code behavior without shared validation dependencies
@@ -171,9 +182,9 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
 
 ---
 
-## Integrated Testing & Production Strategy
+## 7. Integrated Testing & Production Strategy
 
-### Development Testing (Integrated Throughout Phases 1-4)
+### 7.1 Development Testing (Integrated Throughout Phases 1-4)
 **Approach**: Requirements-based testing with test cases derived from game rules
 
 - **Unit Testing**: Test individual functions against specific rule requirements
@@ -182,7 +193,7 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
 - **System Testing**: Comprehensive rule enforcement and game flow validation
 - **Performance Testing**: Ensure rule validation doesn't impact game responsiveness
 
-### Production Monitoring & Operations
+### 7.2 Production Monitoring & Operations
 **Approach**: Context-specific validation within game logic to protect system integrity
 
 - **Player Type Validation**: Validate player types during game creation (`create_new_game()`)
@@ -194,7 +205,7 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
 - **Error Recovery**: Graceful handling when validation fails within specific contexts
 - **Operational Logging**: Record validation failures with context about which function failed
 
-### Requirements-Based Testing Strategy
+### 7.3 Requirements-Based Testing Strategy
 **Core Principle**: Game rules define testable requirements that drive test case design
 
 1. **Requirements analysis** - Game rules define acceptance criteria and constraints
@@ -202,37 +213,37 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
 3. **Test implementation** - Create test-specific validation and assertion logic
 4. **Test execution** - Verify production code behavior against requirements
 
-## MVP Documentation Requirements
+## 8. MVP Documentation Requirements
 
-### API Documentation
+### 8.1 API Documentation
 - MCP tool specifications with examples
 - Resource schemas and access patterns
 - Sampling workflow documentation
 - Error handling and validation responses
 
-### Integration Guide
+### 8.2 Integration Guide
 - Client setup and connection examples
 - Role-based usage patterns
 - Complete game flow walkthroughs
 - Troubleshooting common issues
 
-## Key Sampling Workflows
+## 9. Key Sampling Workflows
 
-### Overview
+### 9.1 Overview
 - **Board Generation**: User choice or AI generation with output validation
 - **Spymaster Turns**: Role-specific hint generation with input/output validation
 - **Team Turns**: Guess processing with input validation and choice management
 - **Information Security**: Strict role-based filtering for USER vs LLM player types
 
-**Note**: See Appendix A.3 for detailed role isolation strategy and security guarantees.
+**Note**: See Section 12.3 for detailed role isolation strategy and security guarantees.
 
-## Technology Stack
+## 10. Technology Stack
 - **MCP SDK**: Latest Python MCP SDK with sampling support
 - **Game Logic**: Pure Python game state management
 - **Persistence**: JSON-based game state serialization
 - **Input/Output Validation**: Boundary validation for external data
 
-## Success Criteria
+## 11. Success Criteria
 1. **Functional MVP**: Complete game playable through MCP tools with all player type combinations
 2. **Sampling Integration**: All AI decisions via client LLM sampling (for LLM players)
 3. **Elicitation Integration**: All human decisions via client elicitation (for USER players)
@@ -247,25 +258,25 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
 
 ---
 
-## Appendix: Detailed Reference
+## 12. Appendix: Detailed Reference
 
-### A.1 MCP Tools Reference
+### 12.1 MCP Tools Reference
 
-#### `create_new_game(red_spymaster, red_team, blue_spymaster, blue_team)`
+#### 12.1.1 `create_new_game(red_spymaster, red_team, blue_spymaster, blue_team)`
 **Purpose**: User initiates a new game with player type configuration
 **Parameters**: Each role can be "user" (human interaction via elicitation) or "llm" (AI interaction via sampling)
 **Returns**: Initial game status and triggers internal setup sequence
 **Usage**: Only out-of-turn action that doesn't require game state validation
 
-#### `end_game()`
+#### 12.1.2 `end_game()`
 **Purpose**: User terminates current game
 **Parameters**: None
 **Returns**: Confirmation of game termination
 **Usage**: Safe to call anytime, terminates all internal game processes
 
-### A.2 Internal Functions Reference
+### 12.2 Internal Functions Reference
 
-#### Game State Management
+#### 12.2.1 Game State Management
 - `_switch_role_internal(role)` - Internal role management for game flow
 - `_advance_turn()` - Move to next role/team automatically
 - `_check_win_conditions()` - Game end detection
@@ -275,10 +286,10 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
 - `_reveal_card(card_index)` - Reveal a card and update game state
 - `_get_card_team(card_index)` - Get team assignment for a specific card
 
-#### Input/Output Validation (Production Critical)
+#### 12.2.2 Input/Output Validation (Production Critical)
 - `_validate_word_list(words)` - Ensure word list meets technical requirements (count, format)
 
-#### Sampling & Elicitation Infrastructure
+#### 12.2.3 Sampling & Elicitation Infrastructure
 - `_elicit_board_preference()` - Server asks user for word source, validates preference format
 - `_sample_word_list()` - Server requests word generation from LLM, validates count and format
 - `_elicit_spymaster_hint()` - Server prompts for hint (USER spymasters), validates hint format
@@ -288,13 +299,13 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> dict[str, An
 - `_elicit_continue_guessing()` - Server asks if team wants to continue, validates yes/no response
 - `_sample_continue_guessing()` - Server requests continuation decision from LLM, validates yes/no response
 
-#### Context Generation & Role Isolation
+#### 12.2.4 Context Generation & Role Isolation
 - `_generate_spymaster_context()` - Create role-specific context with full board knowledge for LLM spymasters
 - `_generate_team_context()` - Create role-specific context with limited board info for LLM teams
 - `_build_dynamic_prompts()` - Generate game state-aware prompts for sampling requests
 - `_filter_context_by_role()` - Ensure appropriate information isolation in sampling contexts
 
-#### High-Level Game Flow
+#### 12.2.5 High-Level Game Flow
 - `_run_spymaster_turn()` - Complete spymaster turn sequence with validation
 - `_run_team_turn()` - Complete team turn sequence with choice management
 - `_handle_game_end()` - Process win/lose conditions

@@ -4,6 +4,7 @@ norecursedirs = [".venv", "__pycache__", "scripts", "docs", ".pytest_cache"]
 addopts = "--import-mode=importlib"
 
 [tool.poetry]
+package-mode = false
 name = "codenames-mcp"
 version = "0.1.0"
 description = "A standalone Model Context Protocol (MCP) server that implements a complete Codenames game experience with LLM sampling and human elicitation support"
@@ -25,7 +26,6 @@ fastmcp = ">=2.11.3,<3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 robotframework = "^7.3.2"
-poethepoet = "^0.37.0"
 pytest = "^8.4.1"
 black = "^24.0.0"
 flake8 = "^7.0.0"
@@ -34,10 +34,10 @@ pre-commit = "^4.3.0"
 pytest-cov = "^6.2.1"
 
 [tool.poetry.extras]
-dev = ["robotframework", "poethepoet", "pytest", "black", "flake8", "flake8-black"]
+dev = ["robotframework", "pytest", "black", "flake8", "flake8-black"]
 
 [tool.poetry.requires-plugins]
-poethepoet = { version = "^0.37.0", extras = ["poetry_plugin"]}
+
 
 
 

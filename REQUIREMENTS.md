@@ -12,6 +12,8 @@ This file provides a concise, actionable workflow for autonomous AI agents devel
 
 ## Workflow Steps
 
+**Note:** The `poethepoet` plugin is installed globally using `poetry self add poethepoet` due to Poetry's plugin requirements on Windows. It is not listed as a project dependency in `pyproject.toml`.
+
 ## Reproducible Git Commit & Push Steps
 1. Install dependencies:
    - `poetry install`

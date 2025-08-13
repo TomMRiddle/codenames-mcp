@@ -1,4 +1,65 @@
+
 # Requirements Specification - Codenames MCP Server
+
+## Table of Contents
+1. Introduction
+    - 1.1 Purpose
+    - 1.2 Scope
+    - 1.3 Definitions and Acronyms
+2. Functional Requirements
+    - 2.1 Game Initialization (F001)
+        - FR-001: Create New Game
+        - FR-002: Add Players to Game
+    - 2.2 Board Generation (F002)
+        - FR-003: Generate Game Board
+        - FR-004: Starting Team Selection
+    - 2.3 Player Role Assignment (F003)
+        - FR-005: Assign Spymasters
+        - FR-006: Role-Based Information Access
+    - 2.4 Spymaster Clue Giving (F004)
+        - FR-007: Give Valid Clue
+        - FR-008: Clue History Tracking
+    - 2.5 Team Guessing (F005)
+        - FR-009: Make Valid Guess
+        - FR-010: Guess Validation and Feedback
+    - 2.6 Turn Management (F006)
+        - FR-011: Turn Progression
+    - 2.7 Win/Loss Detection (F007)
+        - FR-012: Team Victory Conditions
+        - FR-013: Assassin Loss Condition
+    - 2.8 MCP Tool Interface (F008)
+        - FR-014: Tool Registration
+        - FR-015: Resource Management
+        - FR-016: AI Decision Support
+        - FR-017: Context-Aware Prompting
+        - FR-018: User Elicitation Support
+        - FR-019: Spymaster Information Security
+        - FR-020: Player Type Security
+3. Non-Functional Requirements
+    - 3.1 MCP Protocol Compliance (NF001)
+    - 3.2 Performance (NF002)
+    - 3.3 Multi-client Support (NF003)
+    - 3.4 State Consistency (NF004)
+4. Constraints and Assumptions
+    - 4.1 Technical Constraints
+    - 4.2 Business Constraints
+    - 4.3 System Assumptions
+5. Test Strategy and Acceptance Criteria
+    - 5.1 Test Approach Overview
+    - 5.2 Test Levels and Types
+        - 5.2.1 Component Testing
+        - 5.2.2 Integration Testing
+        - 5.2.3 System Testing
+        - 5.2.4 Acceptance Testing
+    - 5.3 User Acceptance Test Scenarios
+        - 5.3.1 Core Gameplay Scenarios
+    - 5.4 Basic Performance Validation
+        - 5.4.1 MVP Performance Requirements
+    - 5.5 Basic Functionality Testing
+        - 5.5.1 Core Game Integrity (MVP Focus)
+    - 5.6 MVP Test Completion Criteria
+        - 5.6.1 MVP Exit Criteria
+        - 5.6.2 MVP Test Focus
 
 ## 1. Introduction
 
@@ -1324,9 +1385,9 @@ TC-NF004-4 Game Invariant Enforcement
     And Invalid States Are Detected And Rejected
 ```
 
-## 5. Constraints and Assumptions
+## 4. Constraints and Assumptions
 
-### 5.1 Technical Constraints
+### 4.1 Technical Constraints
 The following technical constraints apply to the system implementation:
 
 **TC-001: Platform Dependencies**
@@ -1353,7 +1414,7 @@ The following technical constraints apply to the system implementation:
 - **Impact**: Data persistence limited; scalability constraints for production
 - **Testability**: Memory usage and concurrent access testing required
 
-### 5.2 Business Constraints
+### 4.2 Business Constraints
 The following business constraints define scope limitations:
 
 **BC-001: Rule Implementation Scope**
@@ -1380,7 +1441,7 @@ The following business constraints define scope limitations:
 - **Impact**: External communication channels may exist but cannot directly modify game state
 - **Validation**: Game state modification testing and audit trail verification
 
-### 5.3 System Assumptions
+### 4.3 System Assumptions
 The following assumptions underpin the system design:
 
 **AS-001: Client Capability Assumptions**
@@ -1407,14 +1468,14 @@ The following assumptions underpin the system design:
 - **Risk Level**: Low - system provides all necessary context
 - **Mitigation**: Comprehensive context provision and response validation
 
-## 6. Test Strategy and Acceptance Criteria
+## 5. Test Strategy and Acceptance Criteria
 
-### 6.1 Test Approach Overview
+### 5.1 Test Approach Overview
 This section defines the overall testing strategy aligned with ISTQB test process standards, covering test planning, design, execution, and completion criteria.
 
-### 6.2 Test Levels and Types
+### 5.2 Test Levels and Types
 
-#### 6.2.1 Component Testing
+#### 5.2.1 Component Testing
 **Scope**: Individual game logic components
 - Unit tests for game state management
 - Board generation algorithm testing  
@@ -1424,7 +1485,7 @@ This section defines the overall testing strategy aligned with ISTQB test proces
 **Entry Criteria**: Code implementation complete
 **Exit Criteria**: 95% code coverage, all unit tests passing
 
-#### 6.2.2 Integration Testing
+#### 5.2.2 Integration Testing
 **Scope**: MCP protocol integration and component interactions
 - MCP tool registration and execution
 - Sampling and elicitation integration
@@ -1434,7 +1495,7 @@ This section defines the overall testing strategy aligned with ISTQB test proces
 **Entry Criteria**: Component testing complete
 **Exit Criteria**: All integration scenarios pass, protocol compliance verified
 
-#### 6.2.3 System Testing
+#### 5.2.3 System Testing
 **Scope**: Complete game functionality end-to-end
 - Complete game workflow scenarios
 - Multi-player game scenarios
@@ -1444,7 +1505,7 @@ This section defines the overall testing strategy aligned with ISTQB test proces
 **Entry Criteria**: Integration testing complete
 **Exit Criteria**: All system requirements validated, performance criteria met
 
-#### 6.2.4 Acceptance Testing
+#### 5.2.4 Acceptance Testing
 **Scope**: Single game MVP functionality validation
 - Complete single game workflow validation
 - MCP protocol integration works
@@ -1453,9 +1514,9 @@ This section defines the overall testing strategy aligned with ISTQB test proces
 **Entry Criteria**: System testing complete
 **Exit Criteria**: Single complete game works end-to-end
 
-### 6.3 User Acceptance Test Scenarios
+### 5.3 User Acceptance Test Scenarios
 
-#### 6.3.1 Core Gameplay Scenarios
+#### 5.3.1 Core Gameplay Scenarios
 **UAT-001: Complete Game Workflow**
 - **Objective**: Validate full game lifecycle from creation to completion
 - **Scope**: Game creation, player joining, board generation, clue giving, guessing, win conditions
@@ -1474,30 +1535,30 @@ This section defines the overall testing strategy aligned with ISTQB test proces
 - **Success Criteria**: System provides error messages and continues functioning
 - **Priority**: Medium
 
-### 6.4 Basic Performance Validation
+### 5.4 Basic Performance Validation
 
-#### 6.4.1 MVP Performance Requirements
+#### 5.4.1 MVP Performance Requirements
 - **Single Game Operations**: Must complete without hanging or crashing
 - **Board Generation**: Must complete successfully every time
 - **Response Times**: Reasonable for local development/testing (no specific targets)
 
-### 6.5 Basic Functionality Testing
+### 5.5 Basic Functionality Testing
 
-#### 6.5.1 Core Game Integrity (MVP Focus)
+#### 5.5.1 Core Game Integrity (MVP Focus)
 - **Role-based Access**: Spymasters see all colors, operatives see only revealed
 - **Game Rules**: Standard Codenames rules enforced correctly
 - **MCP Integration**: All game tools work as expected
 
-### 6.6 MVP Test Completion Criteria
+### 5.6 MVP Test Completion Criteria
 
-#### 6.6.1 MVP Exit Criteria
+#### 5.6.1 MVP Exit Criteria
 - Single complete game works from start to finish (create → players join → play → someone wins)
 - MCP protocol integration functional for all basic game tools
 - Role-based information filtering works (spymasters see card colors, operatives don't)
 - System doesn't crash on basic invalid inputs
 - Critical game-breaking defects resolved
 
-#### 6.6.2 MVP Test Focus
+#### 5.6.2 MVP Test Focus
 - **Must Work**: Single game completion, MCP tools, role filtering
 - **Should Work**: Basic error handling, game rule enforcement  
 - **Nice to Have**: Performance optimization, edge case handling

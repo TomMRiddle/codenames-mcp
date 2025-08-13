@@ -1,26 +1,56 @@
-# Development Workflow
 
-## Overview
+## 1. Development Workflow
+
+### 1.1 Table of Contents
+1. Overview
+2. Core Principles
+   - ISTQB Testing Fundamentals
+   - TDD Fundamentals
+3. Development Iteration Workflow
+   - Step 1: Analysis & Planning (ISTQB: Test Analysis & Design)
+   - Step 2: Test Design (TDD: Red Phase)
+   - Step 3: Implementation (TDD: Green Phase)
+   - Step 4: Refactoring & Quality (TDD: Refactor Phase)
+   - Step 5: Integration Testing (ISTQB: Test Execution)
+   - Step 6: Review & Documentation (ISTQB: Test Closure)
+4. Quality Gates
+   - Definition of Ready
+   - Definition of Done
+5. Testing Strategy
+   - Test Pyramid
+   - Risk-Based Testing Priority
+6. Tools and Standards
+   - Testing Tools
+   - Code Quality Tools
+   - Documentation Standards
+7. Iteration Metrics
+   - Track Per Iteration
+   - Success Criteria
+8. Emergency Procedures
+   - When Tests Fail
+   - When Behind Schedule
+
+## 2. Overview
 This document defines the repeatable development workflow for the Codenames MCP Server project, incorporating ISTQB testing best practices and Test-Driven Development (TDD) principles.
 
-## Core Principles
+## 3. Core Principles
 
-### ISTQB Testing Fundamentals
+### 3.1 ISTQB Testing Fundamentals
 - **Early Testing**: Testing activities begin during requirements analysis
 - **Defect Prevention**: Focus on preventing defects through good design and testing
 - **Risk-Based Testing**: Prioritize testing based on risk assessment
 - **Independent Testing**: Maintain objectivity in test design and execution
 - **Test Documentation**: Maintain clear, traceable test artifacts
 
-### TDD Fundamentals
+### 3.2 TDD Fundamentals
 - **Red-Green-Refactor**: Write failing test → Make it pass → Improve code
 - **Test First**: No production code without a failing test
 - **Incremental Development**: Small, focused changes
 - **Continuous Feedback**: Tests provide immediate feedback on code quality
 
-## Development Iteration Workflow
+## 4. Development Iteration Workflow
 
-### Step 1: Analysis & Planning (ISTQB: Test Analysis & Design)
+### 4.1 Step 1: Analysis & Planning (ISTQB: Test Analysis & Design)
 **Duration**: 15-30 minutes per feature
 
 1. **Requirements Analysis**
@@ -46,7 +76,7 @@ This document defines the repeatable development workflow for the Codenames MCP 
 - Test scenarios list
 - Interface/API design notes
 
-### Step 2: Test Design (TDD: Red Phase)
+### 4.2 Step 2: Test Design (TDD: Red Phase)
 **Duration**: 30-45 minutes per feature
 
 1. **Unit Test Design**
@@ -86,7 +116,7 @@ class TestGameStateManagement:
 - Integration test stubs
 - Acceptance criteria as executable tests
 
-### Step 3: Implementation (TDD: Green Phase)
+### 4.3 Step 3: Implementation (TDD: Green Phase)
 **Duration**: 45-90 minutes per feature
 
 1. **Minimal Implementation**
@@ -115,7 +145,7 @@ class TestGameStateManagement:
 - MCP tool implementations
 - Updated documentation
 
-### Step 4: Refactoring & Quality (TDD: Refactor Phase)
+### 4.4 Step 4: Refactoring & Quality (TDD: Refactor Phase)
 **Duration**: 30-45 minutes per feature
 
 1. **Code Quality Improvement**
@@ -147,7 +177,7 @@ class TestGameStateManagement:
 - Improved test suite
 - Updated documentation
 
-### Step 5: Integration Testing (ISTQB: Test Execution)
+### 4.5 Step 5: Integration Testing (ISTQB: Test Execution)
 **Duration**: 30-60 minutes per feature
 
 1. **Component Integration Testing**
@@ -176,7 +206,7 @@ class TestGameStateManagement:
 - Defect reports (if any)
 - Verified acceptance criteria
 
-### Step 6: Review & Documentation (ISTQB: Test Closure)
+### 4.6 Step 6: Review & Documentation (ISTQB: Test Closure)
 **Duration**: 15-30 minutes per feature
 
 1. **Code Review**
@@ -206,15 +236,15 @@ class TestGameStateManagement:
 - Updated documentation
 - Retrospective notes
 
-## Quality Gates
+## 5. Quality Gates
 
-### Definition of Ready (before starting iteration)
+### 5.1 Definition of Ready (before starting iteration)
 - [ ] Requirements clearly defined
 - [ ] Acceptance criteria specified
 - [ ] Dependencies identified
 - [ ] Test environment available
 
-### Definition of Done (before completing iteration)
+### 5.2 Definition of Done (before completing iteration)
 - [ ] All tests pass (unit, integration, acceptance)
 - [ ] Code reviewed and approved
 - [ ] Documentation updated
@@ -222,9 +252,9 @@ class TestGameStateManagement:
 - [ ] Acceptance criteria verified
 - [ ] Performance acceptable
 
-## Testing Strategy
+## 6. Testing Strategy
 
-### Test Pyramid
+### 6.1 Test Pyramid
 1. **Unit Tests (70%)**
    - Fast, isolated, deterministic
    - Test individual functions and classes
@@ -240,56 +270,56 @@ class TestGameStateManagement:
    - Test with real MCP clients
    - Test cross-system integration
 
-### Risk-Based Testing Priority
+### 6.2 Risk-Based Testing Priority
 1. **High Risk**: Game logic correctness, state consistency
 2. **Medium Risk**: MCP protocol compliance, error handling
 3. **Low Risk**: UI presentation, performance optimization
 
-## Tools and Standards
+## 7. Tools and Standards
 
-### Testing Tools
+### 7.1 Testing Tools
 - **pytest**: Unit and integration testing
 - **unittest.mock**: Mocking dependencies
 - **pytest-asyncio**: Async testing support
 - **coverage.py**: Code coverage measurement
 
-### Code Quality Tools
+### 7.2 Code Quality Tools
 - **ruff**: Linting and formatting
 - **mypy**: Type checking
 - **pre-commit**: Automated quality checks
 
-### Documentation Standards
+### 7.3 Documentation Standards
 - Docstrings for all public methods
 - Type hints for all function signatures
 - README updates for significant changes
 - API documentation for MCP tools
 
-## Iteration Metrics
+## 8. Iteration Metrics
 
-### Track Per Iteration
+### 8.1 Track Per Iteration
 - Time spent per workflow step
 - Number of tests written/passing
 - Code coverage percentage
 - Defects found and fixed
 - Requirements implemented vs planned
 
-### Success Criteria
+### 8.2 Success Criteria
 - All acceptance criteria met
 - Test coverage > 85%
 - No critical defects
 - Code review approved
 - Documentation current
 
-## Emergency Procedures
+## 9. Emergency Procedures
 
-### When Tests Fail
+### 9.1 When Tests Fail
 1. Stop adding new features
 2. Identify root cause
 3. Fix failing tests first
 4. Ensure no regression
 5. Continue with normal workflow
 
-### When Behind Schedule
+### 9.2 When Behind Schedule
 1. Reassess scope and priorities
 2. Focus on minimum viable implementation
 3. Document technical debt
